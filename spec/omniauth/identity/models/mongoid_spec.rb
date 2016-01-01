@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe(OmniAuth::Identity::Models::Mongoid, :db => true) do
+describe(OmniAuth::Identity::Models::Mongoid, db: true) do
   class MongoidTestIdentity
     include Mongoid::Document
     include OmniAuth::Identity::Models::Mongoid

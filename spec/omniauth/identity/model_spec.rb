@@ -6,37 +6,37 @@ end
 
 describe OmniAuth::Identity::Model do
   context 'Class Methods' do
-    subject{ ExampleModel }
+    subject { ExampleModel }
 
     describe '.locate' do
-      it('should be abstract'){ lambda{ subject.locate('abc') }.should raise_error(NotImplementedError) }
+      it('should be abstract') { -> { subject.locate('abc') }.should raise_error(NotImplementedError) }
     end
 
     describe '.authenticate' do
       it 'should call locate and then authenticate' do
-        mocked_instance = mock('ExampleModel', :authenticate => 'abbadoo')
+        mocked_instance = mock('ExampleModel', authenticate: 'abbadoo')
         subject.should_receive(:locate).with('email' => 'example').and_return(mocked_instance)
-        subject.authenticate({'email' => 'example'},'pass').should == 'abbadoo'
+        subject.authenticate({ 'email' => 'example' }, 'pass').should == 'abbadoo'
       end
 
       it 'should call locate with additional scopes when provided' do
-        mocked_instance = mock('ExampleModel', :authenticate => 'abbadoo')
+        mocked_instance = mock('ExampleModel', authenticate: 'abbadoo')
         subject.should_receive(:locate).with('email' => 'example', 'user_type' => 'admin').and_return(mocked_instance)
-        subject.authenticate({'email' => 'example', 'user_type' => 'admin'}, 'pass').should == 'abbadoo'
+        subject.authenticate({ 'email' => 'example', 'user_type' => 'admin' }, 'pass').should == 'abbadoo'
       end
 
       it 'should recover gracefully if locate is nil' do
         subject.stub!(:locate).and_return(nil)
-        subject.authenticate('blah','foo').should be_false
+        subject.authenticate('blah', 'foo').should be_false
       end
     end
   end
 
   context 'Instance Methods' do
-    subject{ ExampleModel.new }
+    subject { ExampleModel.new }
 
     describe '#authenticate' do
-      it('should be abstract'){ lambda{ subject.authenticate('abc') }.should raise_error(NotImplementedError) }
+      it('should be abstract') { -> { subject.authenticate('abc') }.should raise_error(NotImplementedError) }
     end
 
     describe '#uid' do
@@ -53,7 +53,7 @@ describe OmniAuth::Identity::Model do
 
       it 'should raise NotImplementedError if #id is not defined' do
         subject.should_receive(:respond_to?).with('id').and_return(false)
-        lambda{ subject.uid }.should raise_error(NotImplementedError)
+        -> { subject.uid }.should raise_error(NotImplementedError)
       end
     end
 
@@ -72,7 +72,7 @@ describe OmniAuth::Identity::Model do
       end
 
       it 'should raise a NotImplementedError if the auth_key method is not defined' do
-        lambda{ subject.auth_key }.should raise_error(NotImplementedError)
+        -> { subject.auth_key }.should raise_error(NotImplementedError)
       end
     end
 
@@ -80,7 +80,7 @@ describe OmniAuth::Identity::Model do
       it 'should default to setting email' do
         subject.should_receive(:respond_to?).with('email=').and_return(true)
         subject.should_receive(:email=).with 'abc'
-        
+
         subject.auth_key = 'abc'
       end
 
@@ -93,7 +93,7 @@ describe OmniAuth::Identity::Model do
       end
 
       it 'should raise a NotImplementedError if the autH_key method is not defined' do
-        lambda{ subject.auth_key = 'broken' }.should raise_error(NotImplementedError)
+        -> { subject.auth_key = 'broken' }.should raise_error(NotImplementedError)
       end
     end
 

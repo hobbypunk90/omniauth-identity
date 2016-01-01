@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe(OmniAuth::Identity::Models::ActiveRecord, :db => true) do
+describe(OmniAuth::Identity::Models::ActiveRecord, db: true) do
   class TestIdentity < OmniAuth::Identity::Models::ActiveRecord; end
 
   it 'should delegate locate to the where query method' do

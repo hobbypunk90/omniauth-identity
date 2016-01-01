@@ -1,11 +1,11 @@
 require 'spec_helper'
 
-describe(OmniAuth::Identity::Models::DataMapper, :db => true) do
+describe(OmniAuth::Identity::Models::DataMapper, db: true) do
   class DataMapperTestIdentity
     include DataMapper::Resource
     include OmniAuth::Identity::Models::DataMapper
 
-    property :id,              Serial
+    property :id, Serial
     auth_key :ham_sandwich
   end
 

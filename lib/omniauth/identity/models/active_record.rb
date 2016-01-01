@@ -12,7 +12,7 @@ module OmniAuth
 
         def self.auth_key=(key)
           super
-          validates_uniqueness_of key, :case_sensitive => false
+          validates_uniqueness_of key, case_sensitive: false
         end
 
         def self.locate(search_hash)
