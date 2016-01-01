@@ -30,9 +30,8 @@ describe OmniAuth::Strategies::Identity do
   end
 
   describe '#request_phase' do
-    it 'should display a form' do
-      get '/auth/identity'
-      last_response.body.should be_include('<form')
+    it 'should raise an error without an on_login callback' do
+      expect { get '/auth/identity' }.to raise_error('on_login not provided')
     end
   end
 
@@ -82,10 +81,9 @@ describe OmniAuth::Strategies::Identity do
     end
   end
 
-  describe '#registration_form' do
+  describe '#on_registration' do
     it 'should trigger from /auth/identity/register by default' do
-      get '/auth/identity/register'
-      last_response.body.should be_include('Register Identity')
+      expect { get '/auth/identity/register' }.to raise_error('on_registration not provided')
     end
   end
 
@@ -127,9 +125,8 @@ describe OmniAuth::Strategies::Identity do
       end
 
       context 'default' do
-        it 'should show registration form' do
-          post '/auth/identity/register', properties
-          last_response.body.should be_include('Register Identity')
+        it 'should raise error' do
+          expect { post '/auth/identity/register', properties }.to raise_error('on_registration not provided')
         end
       end
 

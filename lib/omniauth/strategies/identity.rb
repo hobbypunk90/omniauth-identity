@@ -13,18 +13,9 @@ module OmniAuth
       option :locate_conditions, ->(req) { { model.auth_key => req['auth_key'] } }
 
       def request_phase
-        if options[:on_login]
-          options[:on_login].call(env)
-        else
-          OmniAuth::Form.build(
-            title: (options[:title] || 'Identity Verification'),
-            url: callback_path
-          ) do |f|
-            f.text_field 'Login', 'auth_key'
-            f.password_field 'Password', 'password'
-            f.html "<p align='center'><a href='#{registration_path}'>Create an Identity</a></p>"
-          end.to_response
-        end
+        fail 'on_login not provided' unless options[:on_login]
+
+        options[:on_login].call(env)
       end
 
       def callback_phase
@@ -35,7 +26,7 @@ module OmniAuth
       def other_phase
         if on_registration_path?
           if request.get?
-            registration_form
+            on_registration
           elsif request.post?
             registration_phase
           end
@@ -44,18 +35,9 @@ module OmniAuth
         end
       end
 
-      def registration_form
-        if options[:on_registration]
-          options[:on_registration].call(env)
-        else
-          OmniAuth::Form.build(title: 'Register Identity') do |f|
-            options[:fields].each do |field|
-              f.text_field field.to_s.capitalize, field.to_s
-            end
-            f.password_field 'Password', 'password'
-            f.password_field 'Confirm Password', 'password_confirmation'
-          end.to_response
-        end
+      def on_registration
+        fail 'on_registration not provided' unless options[:on_registration]
+        options[:on_registration].call(env)
       end
 
       def registration_phase
@@ -69,7 +51,7 @@ module OmniAuth
             env['omniauth.identity'] = @identity
             options[:on_failed_registration].call(env)
           else
-            registration_form
+            on_registration
           end
         end
       end
