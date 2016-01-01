@@ -94,7 +94,8 @@ describe OmniAuth::Strategies::Identity do
           name: 'Awesome Dude',
           email: 'awesome@example.com',
           password: 'face',
-          password_confirmation: 'face'
+          password_confirmation: 'face',
+          provider: 'identity'
         }
       end
 
@@ -102,11 +103,13 @@ describe OmniAuth::Strategies::Identity do
         MockIdentity.stub('auth_key').and_return('email')
         m = mock(uid: 'abc', name: 'Awesome Dude', email: 'awesome@example.com', info: { name: 'DUUUUDE!' }, persisted?: true)
         MockIdentity.should_receive(:create).with(properties).and_return(m)
+        MockIdentity.should_receive(:provider_column?).and_return(m)
       end
 
       it 'should set the auth hash' do
         post '/auth/identity/register', properties
         auth_hash['uid'].should == 'abc'
+        auth_hash['provider'].should == 'identity'
       end
     end
 
@@ -116,12 +119,14 @@ describe OmniAuth::Strategies::Identity do
           name: 'Awesome Dude',
           email: 'awesome@example.com',
           password: 'NOT',
-          password_confirmation: 'MATCHING'
+          password_confirmation: 'MATCHING',
+          provider: 'identity'
         }
       end
 
       before do
         MockIdentity.should_receive(:create).with(properties).and_return(mock(persisted?: false))
+        MockIdentity.should_receive(:provider_column?).and_return(true)
       end
 
       context 'default' do

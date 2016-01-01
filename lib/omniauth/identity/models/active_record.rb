@@ -9,6 +9,10 @@ module OmniAuth
         self.abstract_class = true
         has_secure_password
 
+        def self.provider_column?
+          column_names.include? 'provider'
+        end
+
         def self.auth_key=(key)
           super
           validates_uniqueness_of key, case_sensitive: false
