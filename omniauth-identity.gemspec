@@ -10,12 +10,8 @@ Gem::Specification.new do |gem|
   gem.add_development_dependency 'rack-test', '~> 0.5'
   gem.add_development_dependency 'rake', '~> 0.8'
   gem.add_development_dependency 'rspec', '~> 2.7'
-  gem.add_development_dependency 'activerecord', '~> 3.1'
-  gem.add_development_dependency 'mongoid'
-  gem.add_development_dependency 'mongo_mapper'
-  gem.add_development_dependency 'datamapper'
-  gem.add_development_dependency 'bson_ext'
-  gem.add_development_dependency 'couch_potato'
+  gem.add_development_dependency 'activerecord', '~> 4.1'
+
 
   gem.name = 'omniauth-identity'
   gem.version = OmniAuth::Identity::VERSION
@@ -25,7 +21,7 @@ Gem::Specification.new do |gem|
   gem.homepage = 'http://github.com/intridea/omniauth-identity'
   gem.authors = ['Michael Bleigh']
   gem.license     = 'MIT'
-  gem.executables = `git ls-files -- bin/*`.split("\n").map{|f| File.basename(f)}
+  gem.executables = `git ls-files -- bin/*`.split("\n").map { |f| File.basename(f) }
   gem.files = `git ls-files`.split("\n")
   gem.test_files = `git ls-files -- {test,spec,features}/*`.split("\n")
   gem.require_paths = ['lib']
