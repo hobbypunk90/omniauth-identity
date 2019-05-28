@@ -7,7 +7,9 @@ module OmniAuth
         def self.included(base)
           base.class_eval do
             include ::OmniAuth::Identity::Model
-            include ::OmniAuth::Identity::SecurePassword
+            include ActiveModel::SecurePassword
+
+            key :password_digest, String
 
             has_secure_password
 

@@ -5,7 +5,7 @@ module OmniAuth
     module Models
       class ActiveRecord < ::ActiveRecord::Base
         include OmniAuth::Identity::Model
-        include OmniAuth::Identity::SecurePassword
+        include ActiveModel::SecurePassword
 
         self.abstract_class = true
         has_secure_password

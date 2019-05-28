@@ -11,7 +11,9 @@ module OmniAuth
           base.class_eval do
 
             include ::OmniAuth::Identity::Model
-            include ::OmniAuth::Identity::SecurePassword
+            include ActiveModel::SecurePassword
+
+            property :password_digest, type: String
 
             has_secure_password
 

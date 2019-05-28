@@ -52,32 +52,32 @@ module OmniAuth
         raise NotImplementedError
       end
 
-      SCHEMA_ATTRIBUTES = %w(name email nickname first_name last_name location description image phone)
+      SCHEMA_ATTRIBUTES = %w(username email)
       # A hash of as much of the standard OmniAuth schema as is stored
       # in this particular model. By default, this will call instance
       # methods for each of the attributes it needs in turn, ignoring
       # any for which `#respond_to?` is `false`.
       #
-      # If `first_name`, `nickname`, and/or `last_name` is provided but 
-      # `name` is not, it will be automatically calculated.
-      #
       # @return [Hash] A string-keyed hash of user information.
       def info
-        info = SCHEMA_ATTRIBUTES.inject({}) do |hash,attribute|
-          hash[attribute] = send(attribute) if respond_to?(attribute)
-          hash
-        end
-        info
+        self.attributes.slice(*SCHEMA_ATTRIBUTES)
+      end
+
+      def extra
+        self.attributes.except(*(SCHEMA_ATTRIBUTES + ["id", "_id", "created_at", "updated_at", "password_digest", "_type", "provider"]))
       end
 
       # An identifying string that must be globally unique to the
       # application. Defaults to stringifying the `id` method.
       #
+      # @param [String] uid_field The field with is used as uid.
+      #
       # @return [String] An identifier string unique to this identity.
-      def uid
-        if respond_to?('id')
-          return nil if self.id.nil?
-          self.id.to_s
+      def uid(uid_field)
+        if respond_to?(uid_field)
+          self.send(uid_field)
+        elsif respond_to?('id')
+          self.id&.to_s
         else
           raise NotImplementedError 
         end

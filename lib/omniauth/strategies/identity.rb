@@ -6,6 +6,7 @@ module OmniAuth
     class Identity
       include OmniAuth::Strategy
 
+      option :uid_field, :email
       option :fields, [:name, :email]
       option :on_login, nil
       option :on_registration, nil
@@ -28,7 +29,9 @@ module OmniAuth
       end
 
       def callback_phase
-        return fail!(:invalid_credentials) unless identity
+        unless identity
+          return fail!(:invalid_credentials)
+        end
         super
       end
 
@@ -49,6 +52,14 @@ module OmniAuth
           options[:on_registration].call(self.env)
         else
           OmniAuth::Form.build(:title => 'Register Identity') do |f|
+            if @identity&.errors&.any?
+              f.html("<ul>")
+              @identity.errors.full_messages.each do |msg|
+                f.html("<li>#{msg}</li>")
+              end
+              f.html("</ul>")
+            end
+
             options[:fields].each do |field|
               f.text_field field.to_s.capitalize, field.to_s
             end
@@ -60,8 +71,9 @@ module OmniAuth
 
       def registration_phase
         attributes = (options[:fields] + [:password, :password_confirmation]).inject({}){|h,k| h[k] = request[k.to_s]; h}
-        @identity = model.create(attributes)
-        if @identity.persisted?
+        attributes[:provider] = :identity
+        @identity = model.new(attributes)
+        if @identity.valid? and @identity.save
           env['PATH_INFO'] = callback_path
           callback_phase
         else
@@ -74,8 +86,9 @@ module OmniAuth
         end
       end
 
-      uid{ identity.uid }
+      uid{ identity.uid(options[:uid_field]) }
       info{ identity.info }
+      extra{ identity.extra }
 
       def registration_path
         options[:registration_path] || "#{path_prefix}/#{name}/register"

@@ -8,11 +8,13 @@ module OmniAuth
         def self.included(base)
           base.class_eval do
             include OmniAuth::Identity::Model
-            include OmniAuth::Identity::SecurePassword
+            include ActiveModel::SecurePassword
 
             # http://api.rubyonrails.org/classes/ActiveRecord/Persistence.html#method-i-persisted-3F
             # http://rubydoc.info/github/mongoid/mongoid/master/Mongoid/State#persisted%3F-instance_method
             alias persisted? valid?
+
+            property :password_digest, type: String
 
             has_secure_password
 
