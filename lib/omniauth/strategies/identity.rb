@@ -11,7 +11,7 @@ module OmniAuth
       option :on_login, nil
       option :on_registration, nil
       option :on_failed_registration, nil
-      option :locate_conditions, lambda{|req| {model.auth_key => req['auth_key']} }
+      option :locate_conditions, lambda{|req| {model.auth_key => req[model.auth_key]} }
 
       def request_phase
         if options[:on_login]
@@ -21,7 +21,7 @@ module OmniAuth
             :title => (options[:title] || "Identity Verification"),
             :url => callback_path
           ) do |f|
-            f.text_field 'Login', 'auth_key'
+            f.text_field model.auth_key.to_s.capitalize, model.auth_key
             f.password_field 'Password', 'password'
             f.html "<p align='center'><a href='#{registration_path}'>Create an Identity</a></p>"
           end.to_response
